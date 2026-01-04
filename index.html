@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .card { background: #2d2d2d; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        button { background: #0088cc; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; width: 100%; cursor: pointer; }
+        .status { color: #00ff00; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>?? VALERON VPN</h2>
+        <p>Статус: <span class="status">Готов к работе</span></p>
+    </div>
+    
+    <div class="card">
+        <p>Выбрана локация: ???? Нидерланды</p>
+        <button onclick="sendData()">ПОЛУЧИТЬ КЛЮЧ</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Развернуть на весь экран
+
+        function sendData() {
+            // Отправляем боту сигнал, что нажата кнопка
+            tg.sendData("get_key_nl"); 
+            tg.close(); // Закрываем окно после нажатия
+        }
+    </script>
+</body>
+</html>
