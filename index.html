@@ -7,40 +7,35 @@
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
-        
         .tabs { display: flex; background: var(--card); padding: 5px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .tab-btn { flex: 1; padding: 12px 5px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; }
+        .tab-btn { flex: 1; padding: 12px 5px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; font-size: 11px; cursor: pointer; }
         .tab-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
-
         .content { padding: 20px; display: none; }
         .content.active { display: block; }
-
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { background: var(--accent); color: #0f172a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
+        .card { background: var(--card); padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
         .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .acc-item.open .acc-body { max-height: 500px; }
-        
-        .dl-link { display: block; width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; box-sizing: border-box; }
+        .dl-link { display: block; width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; box-sizing: border-box; font-size: 13px; }
         .android { background: #3ddc84; color: #073042; }
         .ios { background: #f8fafc; color: #1e293b; }
+        .support-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid var(--accent); width: 100%; padding: 12px; border-radius: 10px; margin-top: 20px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('servers')">СЕРВЕРЫ</button>
         <button class="tab-btn" onclick="openTab('guide')">ИНСТРУКЦИЯ</button>
         <button class="tab-btn" onclick="openTab('profile')">ПРОФИЛЬ</button>
     </div>
-
     <div id="servers" class="content active">
-        <div class="card"><span>🇳🇱 Netherlands</span><button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇩🇪 Germany</span><button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇳🇱 Нидерланды</span><button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇩🇪 Германия</span><button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇹🇷 Турция</span><button class="btn" onclick="sendToBot('get_key_tr')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇵🇱 Польша</span><button class="btn" onclick="sendToBot('get_key_pl')">ВЗЯТЬ</button></div>
     </div>
-
     <div id="guide" class="content">
         <div class="acc-item">
             <button class="acc-header" onclick="toggleAcc(this)">1. Скачать приложение <span>▼</span></button>
@@ -48,53 +43,38 @@
                 <div style="padding: 15px;">
                     <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang" class="dl-link android">🤖 Android (Google Play)</a>
                     <a href="https://apps.apple.com/us/app/v2box-v2ray-client/id1641370297" class="dl-link ios">🍎 iOS (App Store)</a>
+                    <button class="btn" style="width: 100%; margin-top: 15px; background: #64748b; color: white;" onclick="sendToBot('get_links')">🔗 Ссылки в чат</button>
                 </div>
             </div>
         </div>
-        <div class="acc-item">
-            <button class="acc-header" onclick="toggleAcc(this)">2. Получить ключ <span>▼</span></button>
-            <div class="acc-body"><div style="padding: 15px;">Нажмите "ВЗЯТЬ" во вкладке Серверы. Ключ придет в чат.</div></div>
-        </div>
     </div>
-
     <div id="profile" class="content">
-        <div style="text-align: center; background: var(--card); padding: 20px; border-radius: 15px;">
+        <div style="text-align: center; background: var(--card); padding: 25px; border-radius: 15px;">
             <h2 id="userName">Пользователь</h2>
-            <p>Статус: <span style="color: #38bdf8">FREE</span></p>
-            <p>Канал: @DAVAVIPN</p>
+            <p style="color: #4ade80;">Статус: FREE</p>
+            <p style="font-size: 12px; opacity: 0.6;">ID: <span id="userId">...</span></p>
+            <button class="support-btn" onclick="sendToBot('get_support')">🆘 Техподдержка</button>
         </div>
     </div>
-
     <script>
         var tg = window.Telegram.WebApp;
         tg.expand();
-
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name;
+            document.getElementById('userId').innerText = tg.initDataUnsafe.user.id;
         }
-
         function openTab(tabId) {
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
         }
-
-        function toggleAcc(el) {
-            el.parentElement.classList.toggle('open');
-        }
-
-        function sendToBot(command) {
-            tg.sendData(command);
-            tg.close();
-        }
-
-        // Автоматическая обработка всех внешних ссылок
+        function toggleAcc(el) { el.parentElement.classList.toggle('open'); }
+        function sendToBot(command) { tg.sendData(command); tg.close(); }
         document.addEventListener('click', function(e) {
             var target = e.target.closest('a');
             if (target && target.href.startsWith('http')) {
-                e.preventDefault();
-                tg.openLink(target.href);
+                e.preventDefault(); tg.openLink(target.href);
             }
         });
     </script>
