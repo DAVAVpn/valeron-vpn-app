@@ -8,19 +8,26 @@
         :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
         
-        /* Меню вкладок */
-        .tabs { display: flex; background: var(--card); padding: 10px; position: sticky; top: 0; z-index: 10; }
-        .tab-btn { flex: 1; padding: 10px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; }
-        .tab-btn.active { opacity: 1; border-bottom-color: var(--accent); color: var(--accent); }
+        .tabs { display: flex; background: var(--card); padding: 10px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
         .content { padding: 20px; display: none; }
         .content.active { display: block; }
 
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
+        /* Стили серверов */
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+        .btn { background: var(--accent); color: #0f172a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* Стили АККОРДЕОНА (Инструкции) */
+        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; cursor: pointer; }
+        .acc-header::after { content: '▼'; font-size: 10px; opacity: 0.5; transition: 0.3s; }
+        .acc-item.open .acc-header::after { transform: rotate(180deg); color: var(--accent); }
         
-        .step { background: rgba(56, 189, 248, 0.1); border-left: 3px solid var(--accent); padding: 10px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 14px; text-align: left; }
-        .step b { color: var(--accent); }
+        .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(0,0,0,0.2); }
+        .acc-content { padding: 15px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.8); }
+        .acc-item.open .acc-body { max-height: 200px; } /* Ограничение высоты раскрытия */
     </style>
 </head>
 <body>
@@ -42,15 +49,35 @@
     </div>
 
     <div id="guide" class="content">
-        <h3>Как пользоваться? 🛠</h3>
-        <div class="step">
-            <b>Шаг 1:</b> Скачайте приложение <b>v2rayNG</b> (Android) или <b>V2Box</b> (iOS).
+        <h3 style="margin-top:0">Настройка за 3 шага</h3>
+        
+        <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">1. Скачать приложение</button>
+            <div class="acc-body">
+                <div class="acc-content">
+                    Для Android: <b>v2rayNG</b><br>
+                    Для iOS: <b>V2Box</b> или <b>Streisand</b><br>
+                    Ищите их в Google Play или App Store.
+                </div>
+            </div>
         </div>
-        <div class="step">
-            <b>Шаг 2:</b> Нажмите кнопку "ВЗЯТЬ" в этом приложении. Бот пришлет вам ключ.
+
+        <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">2. Получить ключ</button>
+            <div class="acc-body">
+                <div class="acc-content">
+                    Вернитесь во вкладку "СЕРВЕРЫ", выберите страну и нажмите кнопку "ВЗЯТЬ". Бот пришлет вам код ключа.
+                </div>
+            </div>
         </div>
-        <div class="step">
-            <b>Шаг 3:</b> Скопируйте ключ и вставьте его в приложение через иконку <b>"+"</b>.
+
+        <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">3. Подключиться</button>
+            <div class="acc-body">
+                <div class="acc-content">
+                    Скопируйте ключ из чата. В приложении нажмите <b>+</b> -> <b>Import from Clipboard</b>. Затем нажмите на кнопку подключения.
+                </div>
+            </div>
         </div>
     </div>
 
@@ -59,11 +86,23 @@
         tg.expand();
 
         function openTab(tabId) {
-            // Переключение вкладок
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+
+        // Функция для раскрытия пунктов инструкции
+        function toggleAcc(el) {
+            const item = el.parentElement;
+            const isOpen = item.classList.contains('open');
+            
+            // Закрываем все остальные (необязательно, но так красивее)
+            document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+            
+            if (!isOpen) {
+                item.classList.add('open');
+            }
         }
 
         function sendToBot(command) {
