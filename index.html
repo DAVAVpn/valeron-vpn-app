@@ -1,41 +1,74 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #38bdf8; }
-        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        button:active { background: #fff; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
+        
+        /* Меню вкладок */
+        .tabs { display: flex; background: var(--card); padding: 10px; position: sticky; top: 0; z-index: 10; }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; }
+        .tab-btn.active { opacity: 1; border-bottom-color: var(--accent); color: var(--accent); }
+
+        .content { padding: 20px; display: none; }
+        .content.active { display: block; }
+
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
+        
+        .step { background: rgba(56, 189, 248, 0.1); border-left: 3px solid var(--accent); padding: 10px; margin-bottom: 15px; border-radius: 0 8px 8px 0; font-size: 14px; text-align: left; }
+        .step b { color: var(--accent); }
     </style>
 </head>
 <body>
-    <h2>VALERON VPN</h2>
-    <div class="card">
-        <span>🇳🇱 Netherlands</span>
-        <button onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('servers')">СЕРВЕРЫ</button>
+        <button class="tab-btn" onclick="openTab('guide')">ИНСТРУКЦИЯ</button>
     </div>
-    <div class="card">
-        <span>🇩🇪 Germany</span>
-        <button onclick="sendToBot('get_key_de')">ВЗЯТЬ</button>
+
+    <div id="servers" class="content active">
+        <div class="card">
+            <span>🇳🇱 Netherlands</span>
+            <button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button>
+        </div>
+        <div class="card">
+            <span>🇩🇪 Germany</span>
+            <button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button>
+        </div>
+    </div>
+
+    <div id="guide" class="content">
+        <h3>Как пользоваться? 🛠</h3>
+        <div class="step">
+            <b>Шаг 1:</b> Скачайте приложение <b>v2rayNG</b> (Android) или <b>V2Box</b> (iOS).
+        </div>
+        <div class="step">
+            <b>Шаг 2:</b> Нажмите кнопку "ВЗЯТЬ" в этом приложении. Бот пришлет вам ключ.
+        </div>
+        <div class="step">
+            <b>Шаг 3:</b> Скопируйте ключ и вставьте его в приложение через иконку <b>"+"</b>.
+        </div>
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
         var tg = window.Telegram.WebApp;
         tg.expand();
 
+        function openTab(tabId) {
+            // Переключение вкладок
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
         function sendToBot(command) {
-            try {
-                // Пытаемся отправить данные боту
-                tg.sendData(command);
-                // Пытаемся закрыть окно
-                tg.close();
-            } catch (e) {
-                alert("Ошибка: " + e.message);
-            }
+            tg.sendData(command);
+            tg.close();
         }
     </script>
 </body>
