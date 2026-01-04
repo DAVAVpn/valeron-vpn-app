@@ -9,25 +9,30 @@
         body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
         
         .tabs { display: flex; background: var(--card); padding: 10px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; cursor: pointer; }
         .tab-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
 
         .content { padding: 20px; display: none; }
         .content.active { display: block; }
 
-        /* Стили серверов */
-        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .btn { background: var(--accent); color: #0f172a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: var(--accent); color: #0f172a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; }
 
-        /* Стили АККОРДЕОНА (Инструкции) */
-        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 15px; font-weight: bold; display: flex; justify-content: space-between; cursor: pointer; }
-        .acc-header::after { content: '▼'; font-size: 10px; opacity: 0.5; transition: 0.3s; }
-        .acc-item.open .acc-header::after { transform: rotate(180deg); color: var(--accent); }
-        
-        .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: rgba(0,0,0,0.2); }
-        .acc-content { padding: 15px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,0.8); }
-        .acc-item.open .acc-body { max-height: 200px; } /* Ограничение высоты раскрытия */
+        /* Аккордеон */
+        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .acc-item.open .acc-body { max-height: 500px; }
+        .acc-content { padding: 15px; font-size: 14px; }
+
+        /* Кнопки скачивания */
+        .download-links { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .dl-btn { 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px;
+        }
+        .android { background: #3ddc84; color: #073042; }
+        .ios { background: #f8fafc; color: #1e293b; }
     </style>
 </head>
 <body>
@@ -38,26 +43,26 @@
     </div>
 
     <div id="servers" class="content active">
-        <div class="card">
-            <span>🇳🇱 Netherlands</span>
-            <button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button>
-        </div>
-        <div class="card">
-            <span>🇩🇪 Germany</span>
-            <button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button>
-        </div>
+        <div class="card"><span>🇳🇱 Netherlands</span><button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇩🇪 Germany</span><button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
     </div>
 
     <div id="guide" class="content">
-        <h3 style="margin-top:0">Настройка за 3 шага</h3>
+        <h3>Настройка за 3 шага</h3>
         
         <div class="acc-item">
             <button class="acc-header" onclick="toggleAcc(this)">1. Скачать приложение</button>
             <div class="acc-body">
                 <div class="acc-content">
-                    Для Android: <b>v2rayNG</b><br>
-                    Для iOS: <b>V2Box</b> или <b>Streisand</b><br>
-                    Ищите их в Google Play или App Store.
+                    Нажмите на кнопку вашей платформы, чтобы перейти в магазин:
+                    <div class="download-links">
+                        <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang" target="_blank" class="dl-btn android">
+                            🤖 Скачать v2rayNG (Android)
+                        </a>
+                        <a href="https://apps.apple.com/us/app/v2box-v2ray-client/id1641370297" target="_blank" class="dl-btn ios">
+                            🍎 Скачать V2Box (iOS)
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,18 +70,14 @@
         <div class="acc-item">
             <button class="acc-header" onclick="toggleAcc(this)">2. Получить ключ</button>
             <div class="acc-body">
-                <div class="acc-content">
-                    Вернитесь во вкладку "СЕРВЕРЫ", выберите страну и нажмите кнопку "ВЗЯТЬ". Бот пришлет вам код ключа.
-                </div>
+                <div class="acc-content">Во вкладке "СЕРВЕРЫ" нажмите "ВЗЯТЬ" — бот пришлет ключ в чат.</div>
             </div>
         </div>
 
         <div class="acc-item">
             <button class="acc-header" onclick="toggleAcc(this)">3. Подключиться</button>
             <div class="acc-body">
-                <div class="acc-content">
-                    Скопируйте ключ из чата. В приложении нажмите <b>+</b> -> <b>Import from Clipboard</b>. Затем нажмите на кнопку подключения.
-                </div>
+                <div class="acc-content">Скопируйте ключ, в приложении нажмите <b>+</b> -> <b>Import from Clipboard</b> и кнопку подключения.</div>
             </div>
         </div>
     </div>
@@ -92,17 +93,11 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Функция для раскрытия пунктов инструкции
         function toggleAcc(el) {
             const item = el.parentElement;
             const isOpen = item.classList.contains('open');
-            
-            // Закрываем все остальные (необязательно, но так красивее)
             document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-            
-            if (!isOpen) {
-                item.classList.add('open');
-            }
+            if (!isOpen) item.classList.add('open');
         }
 
         function sendToBot(command) {
