@@ -5,86 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f8fafc; }
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
-        
-        .tabs { display: flex; background: var(--card); padding: 5px; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .tab-btn { flex: 1; padding: 12px 5px; border: none; background: none; color: white; opacity: 0.5; font-weight: bold; font-size: 11px; cursor: pointer; }
-        .tab-btn.active { opacity: 1; color: var(--accent); border-bottom: 2px solid var(--accent); }
+        :root {
+            --bg: #0b0f1a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --gold: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --text: #f8fafc;
+        }
 
-        .content { padding: 20px; display: none; }
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at top right, #1e293b, #0b0f1a);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Навигация */
+        .tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 5px;
+            border: none;
+            background: none;
+            color: white;
+            opacity: 0.4;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            opacity: 1;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+        }
+
+        .content { padding: 20px; display: none; animation: fadeIn 0.4s ease; }
         .content.active { display: block; }
 
-        .card { background: var(--card); padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
-        .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
-        .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        /* Карточки серверов */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .card:active { transform: scale(0.97); }
+
+        .server-info { display: flex; align-items: center; gap: 12px; }
+        .flag { font-size: 24px; }
+        .server-name { font-weight: 600; font-size: 15px; }
+        .status-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px #4ade80; }
+
+        .btn-get {
+            background: var(--accent);
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Инструкция (Аккордеон) */
+        .acc-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        .acc-header {
+            width: 100%;
+            padding: 18px;
+            background: none;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .acc-body { max-height: 0; overflow: hidden; transition: 0.4s ease-out; background: rgba(0,0,0,0.2); }
         .acc-item.open .acc-body { max-height: 500px; }
-        
-        .dl-link { display: block; width: 100%; padding: 14px; margin-top: 10px; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; box-sizing: border-box; font-size: 14px; }
+
+        .dl-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            margin: 10px 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
         .android { background: #3ddc84; color: #073042; }
-        .ios { background: #f8fafc; color: #1e293b; }
-        
-        .support-btn { background: rgba(56, 189, 248, 0.1); color: var(--accent); border: 1px solid var(--accent); width: 100%; padding: 12px; border-radius: 10px; margin-top: 20px; font-weight: bold; cursor: pointer; }
+        .ios { background: #ffffff; color: #1e293b; }
+
+        /* Профиль */
+        .profile-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .premium-badge {
+            background: var(--gold);
+            color: #451a03;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .support-btn {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('servers')">СЕРВЕРЫ</button>
-        <button class="tab-btn" onclick="openTab('guide')">ИНСТРУКЦИЯ</button>
-        <button class="tab-btn" onclick="openTab('profile')">ПРОФИЛЬ</button>
+        <button class="tab-btn active" onclick="openTab('servers')">Серверы</button>
+        <button class="tab-btn" onclick="openTab('guide')">Инструкция</button>
+        <button class="tab-btn" onclick="openTab('profile')">Профиль</button>
     </div>
 
     <div id="servers" class="content active">
-        <div class="card"><span>🇳🇱 Нидерланды</span><button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇩🇪 Германия</span><button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇹🇷 Турция</span><button class="btn" onclick="sendToBot('get_key_tr')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇵🇱 Польша</span><button class="btn" onclick="sendToBot('get_key_pl')">ВЗЯТЬ</button></div>
+        <h3 style="margin-top:0; opacity: 0.7; font-size: 14px;">ДОСТУПНЫЕ ЛОКАЦИИ</h3>
+        
+        <div class="card">
+            <div class="server-info">
+                <span class="flag">🇳🇱</span>
+                <div>
+                    <div class="server-name">Нидерланды #1</div>
+                    <div style="font-size: 10px; opacity: 0.6;"><span class="status-dot"></span>Online • 15ms</div>
+                </div>
+            </div>
+            <button class="btn-get" onclick="sendToBot('get_key_nl')">ПОДКЛЮЧИТЬ</button>
+        </div>
+
+        <div class="card">
+            <div class="server-info">
+                <span class="flag">🇩🇪</span>
+                <div>
+                    <div class="server-name">Германия #1</div>
+                    <div style="font-size: 10px; opacity: 0.6;"><span class="status-dot"></span>Online • 28ms</div>
+                </div>
+            </div>
+            <button class="btn-get" onclick="sendToBot('get_key_de')">ПОДКЛЮЧИТЬ</button>
+        </div>
+
+        <div class="card">
+            <div class="server-info">
+                <span class="flag">🇹🇷</span>
+                <div>
+                    <div class="server-name">Турция (Стамбул)</div>
+                    <div style="font-size: 10px; opacity: 0.6;"><span class="status-dot"></span>Online • 45ms</div>
+                </div>
+            </div>
+            <button class="btn-get" onclick="sendToBot('get_key_tr')">ПОДКЛЮЧИТЬ</button>
+        </div>
+
+        <div class="card" style="opacity: 0.8;">
+            <div class="server-info">
+                <span class="flag">🇵🇱</span>
+                <div>
+                    <div class="server-name">Польша (Варшава)</div>
+                    <div style="font-size: 10px; opacity: 0.6;"><span class="status-dot"></span>Online • 22ms</div>
+                </div>
+            </div>
+            <button class="btn-get" onclick="sendToBot('get_key_pl')">ПОДКЛЮЧИТЬ</button>
+        </div>
     </div>
 
     <div id="guide" class="content">
         <div class="acc-item open">
-            <button class="acc-header" onclick="toggleAcc(this)">1. Скачать приложение <span>▼</span></button>
+            <button class="acc-header" onclick="toggleAcc(this)">1. Установка клиента <span>▼</span></button>
             <div class="acc-body">
-                <div style="padding: 15px;">
-                    <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="dl-link android">🤖 Android (Google Play)</a>
-                    <a href="https://apps.apple.com/ru/app/v2raytun/id6476628951" target="_blank" class="dl-link ios">🍎 iOS (App Store)</a>
-                    
-                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-                    <button class="btn" style="width: 100%; background: #64748b; color: white;" onclick="sendToBot('get_links')">📥 Ссылки в чат (если кнопки выше не нажались)</button>
+                <div style="padding: 5px 0 15px 0;">
+                    <a href="https://play.google.com/store/apps/details?id=com.v2raytun.android" target="_blank" class="dl-link android">
+                        <span>🤖</span> Android (Google Play)
+                    </a>
+                    <a href="https://apps.apple.com/ru/app/v2raytun/id6476628951" target="_blank" class="dl-link ios">
+                        <span>🍎</span> iOS (App Store)
+                    </a>
+                    <button onclick="sendToBot('get_links')" style="background:none; border:none; color:#38bdf8; width:100%; font-size:12px; margin-top:10px; cursor:pointer; text-decoration:underline;">
+                        Не открывается? Прислать в чат
+                    </button>
                 </div>
             </div>
         </div>
+
         <div class="acc-item">
-            <button class="acc-header" onclick="toggleAcc(this)">2. Как подключить? <span>▼</span></button>
+            <button class="acc-header" onclick="toggleAcc(this)">2. Активация ключа <span>▼</span></button>
             <div class="acc-body">
-                <div style="padding: 15px; font-size: 13px; opacity: 0.8;">Скопируйте ключ из бота. В приложении нажмите кнопку "+" и выберите "Import from Clipboard".</div>
+                <p style="padding: 15px; margin:0; font-size: 13px; line-height: 1.6; opacity: 0.8;">
+                    Нажмите «ПОДКЛЮЧИТЬ» напротив нужной страны. Бот выдаст вам код. Скопируйте его целиком, откройте приложение <b>V2RayTun</b>, нажмите на иконку ➕ и выберите пункт <b>«Import from Clipboard»</b>.
+                </p>
             </div>
         </div>
     </div>
 
     <div id="profile" class="content">
-        <div style="text-align: center; background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid rgba(56, 189, 248, 0.2);">
-            <h2 id="userName" style="margin: 0;">Пользователь</h2>
-            <p style="color: #4ade80; font-weight: bold; margin: 10px 0;">Статус: FREE</p>
-            <div style="text-align: left; font-size: 13px; margin-top: 15px; opacity: 0.8;">
-                <p>🆔 ID: <span id="userId">000000</span></p>
-                <p>📅 Подписка: <b>Безлимитно</b></p>
+        <div class="profile-header">
+            <div class="user-avatar" id="avatarLetter">V</div>
+            <div class="premium-badge">PREMIUM MEMBER</div>
+            <h2 id="userName" style="margin: 5px 0;">User Name</h2>
+            <p style="font-size: 12px; opacity: 0.5; margin-bottom: 20px;">ID: <span id="userId">00000000</span></p>
+            
+            <div style="display: flex; gap: 10px;">
+                <div style="flex:1; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
+                    <div style="font-size: 10px; opacity: 0.5;">ТРАФИК</div>
+                    <div style="font-weight: bold;">∞ GB</div>
+                </div>
+                <div style="flex:1; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
+                    <div style="font-size: 10px; opacity: 0.5;">СРОК</div>
+                    <div style="font-weight: bold;">365 дней</div>
+                </div>
             </div>
-            <button class="support-btn" onclick="sendToBot('get_support')">🆘 Техподдержка</button>
+
+            <button class="support-btn" onclick="sendToBot('get_support')">🆘 СЛУЖБА ПОДДЕРЖКИ</button>
         </div>
     </div>
 
     <script>
         var tg = window.Telegram.WebApp;
         tg.expand();
+        tg.headerColor = '#0b0f1a';
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name;
-            document.getElementById('userId').innerText = tg.initDataUnsafe.user.id;
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('userName').innerText = user.first_name;
+            document.getElementById('userId').innerText = user.id;
+            document.getElementById('avatarLetter').innerText = user.first_name.charAt(0);
         }
 
         function openTab(tabId) {
@@ -95,7 +324,8 @@
         }
 
         function toggleAcc(el) {
-            el.parentElement.classList.toggle('open');
+            const item = el.parentElement;
+            item.classList.toggle('open');
         }
 
         function sendToBot(command) {
@@ -103,7 +333,6 @@
             tg.close();
         }
 
-        // Этот скрипт помогает ссылкам открываться корректно через Telegram API
         document.addEventListener('click', function(e) {
             var target = e.target.closest('a');
             if (target && target.href.startsWith('http')) {
