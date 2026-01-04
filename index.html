@@ -13,14 +13,12 @@
         .content { padding: 20px; display: none; }
         .content.active { display: block; }
         .card { background: var(--card); padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
-        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn { background: var(--accent); color: #0f172a; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
         .acc-item { background: var(--card); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
         .acc-header { width: 100%; padding: 15px; background: none; border: none; color: white; text-align: left; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; }
         .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .acc-item.open .acc-body { max-height: 500px; }
-        .dl-link { display: block; width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; box-sizing: border-box; font-size: 13px; color: #fff; }
-        .android { background: #3ddc84; color: #073042; }
-        .ios { background: #f8fafc; color: #1e293b; }
+        .status-box { text-align: center; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid rgba(56, 189, 248, 0.2); }
     </style>
 </head>
 <body>
@@ -31,31 +29,36 @@
     </div>
 
     <div id="servers" class="content active">
-        <div class="card"><span>🇳🇱 Нидерланды</span><button class="btn" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇩🇪 Германия</span><button class="btn" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇹🇷 Турция</span><button class="btn" onclick="sendToBot('get_key_tr')">ВЗЯТЬ</button></div>
-        <div class="card"><span>🇵🇱 Польша</span><button class="btn" onclick="sendToBot('get_key_pl')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇳🇱 Нидерланды</span><button class="btn" style="width:auto" onclick="sendToBot('get_key_nl')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇩🇪 Германия</span><button class="btn" style="width:auto" onclick="sendToBot('get_key_de')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇹🇷 Турция</span><button class="btn" style="width:auto" onclick="sendToBot('get_key_tr')">ВЗЯТЬ</button></div>
+        <div class="card"><span>🇵🇱 Польша</span><button class="btn" style="width:auto" onclick="sendToBot('get_key_pl')">ВЗЯТЬ</button></div>
     </div>
 
     <div id="guide" class="content">
-        <div class="acc-item">
+        <div class="acc-item open">
             <button class="acc-header" onclick="toggleAcc(this)">1. Скачать приложение <span>▼</span></button>
             <div class="acc-body">
-                <div style="padding: 15px;">
-                    <a href="https://play.google.com/store/apps/details?id=com.v2ray.ang" target="_blank" class="dl-link android">🤖 Android (Google Play)</a>
-                    <a href="https://apps.apple.com/us/app/v2box-v2ray-client/id1641370297" target="_blank" class="dl-link ios">🍎 iOS (App Store)</a>
-                    <button class="btn" style="width: 100%; margin-top: 15px; background: #64748b; color: white;" onclick="sendToBot('get_links')">📥 ПРИСЛАТЬ ССЫЛКИ В ЧАТ</button>
+                <div style="padding: 15px; text-align: center;">
+                    <p style="font-size: 13px; opacity: 0.8; margin-bottom: 15px;">Нажмите кнопку ниже, и бот пришлет ссылки на Google Play и App Store прямо в чат.</p>
+                    <button class="btn" onclick="sendToBot('get_links')">📥 ПОЛУЧИТЬ ССЫЛКИ</button>
                 </div>
+            </div>
+        </div>
+        <div class="acc-item">
+            <button class="acc-header" onclick="toggleAcc(this)">2. Как активировать? <span>▼</span></button>
+            <div class="acc-body">
+                <div style="padding: 15px; font-size: 13px; opacity: 0.8;">Скопируйте ключ из чата, откройте приложение и нажмите значок "+".</div>
             </div>
         </div>
     </div>
 
     <div id="profile" class="content">
-        <div style="text-align: center; background: var(--card); padding: 25px; border-radius: 15px;">
-            <h2 id="userName" style="margin: 0;">Пользователь</h2>
-            <p style="color: #4ade80; font-weight: bold; margin: 10px 0;">Статус: FREE</p>
-            <p style="font-size: 13px; opacity: 0.6;">Канал: @DAVAVIPN</p>
-            <button class="btn" style="width: 100%; margin-top: 10px;" onclick="sendToBot('get_support')">🆘 ПОДДЕРЖКА</button>
+        <div class="status-box">
+            <h2 id="userName">...</h2>
+            <p style="color: #4ade80; font-weight: bold;">Статус: ACTIVE</p>
+            <p style="font-size: 12px; opacity: 0.5;">ID: <span id="userId">...</span></p>
+            <button class="btn" style="margin-top: 15px; background: rgba(56,189,248,0.1); color: var(--accent); border: 1px solid var(--accent);" onclick="sendToBot('get_support')">🆘 ПОДДЕРЖКА</button>
         </div>
     </div>
 
@@ -64,6 +67,7 @@
         tg.expand();
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name;
+            document.getElementById('userId').innerText = tg.initDataUnsafe.user.id;
         }
         function openTab(tabId) {
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
@@ -73,15 +77,6 @@
         }
         function toggleAcc(el) { el.parentElement.classList.toggle('open'); }
         function sendToBot(command) { tg.sendData(command); tg.close(); }
-        
-        // Обработка внешних ссылок через API Telegram
-        document.addEventListener('click', function(e) {
-            var target = e.target.closest('a');
-            if (target && target.href.startsWith('http')) {
-                e.preventDefault();
-                tg.openLink(target.href);
-            }
-        });
     </script>
 </body>
 </html>
