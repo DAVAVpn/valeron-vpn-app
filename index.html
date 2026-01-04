@@ -1,33 +1,61 @@
-<!DOCTYPE html>
-<html>
+п»ї<!DOCTYPE html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #1a1a1a; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .card { background: #2d2d2d; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        button { background: #0088cc; color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; width: 100%; cursor: pointer; }
-        .status { color: #00ff00; font-weight: bold; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            width: 85%; 
+            background: #1e293b; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4); 
+            text-align: center; 
+            border: 1px solid #38bdf8;
+        }
+        h1 { color: #38bdf8; font-size: 24px; margin-bottom: 10px; }
+        .status { background: #334155; padding: 10px; border-radius: 10px; margin: 15px 0; font-size: 14px; }
+        button { 
+            background: #38bdf8; 
+            color: #0f172a; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 12px; 
+            font-weight: bold; 
+            width: 100%; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>?? VALERON VPN</h2>
-        <p>Статус: <span class="status">Готов к работе</span></p>
-    </div>
-    
-    <div class="card">
-        <p>Выбрана локация: ???? Нидерланды</p>
-        <button onclick="sendData()">ПОЛУЧИТЬ КЛЮЧ</button>
+    <div class="container">
+        <h1>VALERON VPN</h1>
+        <div class="status">
+            Р›РѕРєР°С†РёСЏ: <b>РќРёРґРµСЂР»Р°РЅРґС‹ рџ‡ірџ‡±</b><br>
+            РЎС‚Р°С‚СѓСЃ: <span style="color: #4ade80;">Р”РѕСЃС‚СѓРїРµРЅ</span>
+        </div>
+        <button onclick="sendData()">РџРћР›РЈР§РРўР¬ РљР›Р®Р§</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
-
+        tg.expand();
         function sendData() {
-            // Отправляем боту сигнал, что нажата кнопка
-            tg.sendData("get_key_nl"); 
-            tg.close(); // Закрываем окно после нажатия
+            tg.sendData("get_key_nl");
+            tg.close();
         }
     </script>
 </body>
